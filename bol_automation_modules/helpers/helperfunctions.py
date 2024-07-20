@@ -1,6 +1,10 @@
 import re
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 def normalize_url(url, with_protocol=True):
     regex = r"^(https?:\/\/)?(www\.)?([-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))"
     match = re.match(regex, url)
@@ -35,7 +39,7 @@ def send_brevo_mail(recipient:str, html_content:str, subject:str, customername =
     ```{message:..., response:...}``` or ```{message:..., error:...}```
     """
     configuration = sib_api_v3_sdk.Configuration()
-    configuration.api_key['api-key'] = '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'
+    configuration.api_key['api-key'] = os.getenv("SENDINBLUE_API_KEY")
 
     api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
     # subject = "from the Python SDK!"
