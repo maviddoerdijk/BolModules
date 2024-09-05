@@ -521,7 +521,7 @@ def add_mails() -> list:
 
 if __name__ == "__main__":
     start_url = 'https://www.bol.com/nl/nl/s/?searchtext='
-    search_topics = ['lamp']
+    search_topics = ['laptop', 'kettingslot', 'schoenenrek', 'etui', 'handdoek']
     crawler = WebCrawlerBol()
     crawler.add_seller_links(start_url, search_topics)
     

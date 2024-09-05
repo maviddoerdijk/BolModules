@@ -13,14 +13,14 @@ import shutil
 import rembg
 from resource_lib import ResourceLib
 
-def draw_text(image, annotation, font_path="fonts/BarlowSemiCondensed-Black.ttf", text_color='blush_pink', font_size = 100, write_mode = '', text_box = ()):
+def draw_text(image, annotation, font_path="bol_automation_modules/images/resources/fonts/BarlowSemiCondensed-Black.ttf", text_color='blush_pink', font_size = 100, write_mode = '', text_box = ()):
     """
     Draws text on an image at a specified location with a specified font, color, and size.
 
     Parameters:
     image (PIL.Image): The image to draw text on.
     annotation (str): The text to draw.
-    font_path (str, optional): The path to the font file. Defaults to "fonts/BarlowSemiCondensed-Black.ttf".
+    font_path (str, optional): The path to the font file. Defaults to "bol_automation_modules/images/resources/fonts/BarlowSemiCondensed-Black.ttf".
     text_color (str, optional): The color of the text. Defaults to 'blush_pink'.
     font_size (int, optional): The size of the font. Defaults to 100.
     write_mode (str, optional): The mode to write the text. Can be 'top_header' or 'custom_position'. Defaults to ''.
@@ -80,7 +80,7 @@ def draw_text(image, annotation, font_path="fonts/BarlowSemiCondensed-Black.ttf"
                 'charcoal_text': (59, 59, 59)
             }
     draw = ImageDraw.Draw(image)
-    font_path = 'fonts/opensans.ttf'
+    font_path = 'bol_automation_modules/images/resources/fonts/opensans.ttf'
     font = ImageFont.truetype(font_path, font_size)
     font.set_variation_by_name('Bold')
     text_color = text_color_dict.get(text_color, (0, 0, 0))
@@ -144,10 +144,8 @@ def paste_image_on_background_to_fit(image, background, target_size = (2048, 204
     
 def create_image_from_template(template_type:str,input_image:str, output_path:str, annotation = "", icon_keyword = ""):
     # check if we are in correct dir
-    if not str(os.getcwd()).endswith('PersonalUseWebcrawlers'):
-        # get wanted dir by removing the character after PersonalUseWebcrawlers
-        wanted_dir = str(os.getcwd()).split('PersonalUseWebcrawlers')[0] + 'PersonalUseWebcrawlers'
-        os.chdir(wanted_dir)
+    if not os.path.exists('bol_automation_modules/images/resources/pre_photos'):
+        raise FileNotFoundError("Please run this script from the bol_automation_modules directory")
     
     if annotation == "...":
         annotation = ""
@@ -194,14 +192,13 @@ def create_image_from_template(template_type:str,input_image:str, output_path:st
             # resize to 150x150, and paste to img at positions given by icon_positions, and paste onto img
             icon_image = icon_image.resize((150, 150))
             # print size of icon_image
-            print(icon_image.size)
             img.paste(icon_image, icon_position, icon_image)
         
         text_positions = [(1630, 100 + 150), (1630, 100 + 532 + 150), (1630, 100 + 2*532 + 150), (1630, 100 + 3*532 + 150)]
         
         for current_annotation, text_position_top_left in zip(annotation, text_positions):
             
-            img = draw_text(img, current_annotation, font_path='fonts/opensans.ttf',text_color='charcoal_text', font_size=100, write_mode='specify_text_box', text_box = ((text_position_top_left[0], text_position_top_left[1]), (text_position_top_left[0] + 500, text_position_top_left[1] + 300)))
+            img = draw_text(img, current_annotation, font_path='bol_automation_modules/images/resources/fonts/opensans.ttf',text_color='charcoal_text', font_size=100, write_mode='specify_text_box', text_box = ((text_position_top_left[0], text_position_top_left[1]), (text_position_top_left[0] + 500, text_position_top_left[1] + 300)))
 
         
         img.show()
@@ -212,7 +209,7 @@ def create_image_from_template(template_type:str,input_image:str, output_path:st
         # create white image 
         img = Image.new("RGB", target_size, "white")
         
-        background = Image.open("pre_photos/backgrounds/5.jpg")
+        background = Image.open("bol_automation_modules/images/resources/pre_photos/backgrounds/5.jpg")
         background = background.resize(target_size)
         if background.mode != 'RGBA':
             background = background.convert('RGBA')
@@ -226,7 +223,7 @@ def create_image_from_template(template_type:str,input_image:str, output_path:st
             product_image = product_image.convert('RGBA')
         img = paste_image_on_background_to_fit(product_image, img, relative_size=0.7)
         
-        img = draw_text(img, annotation, font_path='fonts/opensans.ttf',text_color='charcoal_text', font_size=100, write_mode='top_header')
+        img = draw_text(img, annotation, font_path='bol_automation_modules/images/resources/fonts/opensans.ttf',text_color='charcoal_text', font_size=100, write_mode='top_header')
         
         files_in_output_path = [f for f in os.listdir(output_path) if isfile(join(output_path, f))]
         for i in range(10):
@@ -239,7 +236,8 @@ def create_image_from_template(template_type:str,input_image:str, output_path:st
             
             
 def add_trash_can_to_image(trashcan_image):
-    background_img = Image.open(os.path.join('..', 'pre_photos', 'extra','trashcan_background.jpg'))
+    
+    background_img = Image.open(os.path.join('..', 'bol_automation_modules','images','resources', 'pre_photos', 'extra','trashcan_background.jpg'))
     trashcan_image = Image.open(trashcan_image)
     
     # resize trashcan_image to max width of 850px 
@@ -256,7 +254,6 @@ def add_trash_can_to_image(trashcan_image):
     image = trashcan_image
     image = image.convert("RGBA")
     image_data = image.getdata()
-    print(image_data)
     new_data = []
     for item in image_data:
         item0 = item[0]
@@ -276,6 +273,6 @@ def add_trash_can_to_image(trashcan_image):
     return trashcan_image_path
 if __name__ == "__main__":
     # main()
-    # create_image_from_template(template_type="Infographic met meerdere USP's", input_image='pre_photos/current_bol_images/image0.jpg', output_path='post_photos', annotation='Vervangbare mesjes')
+    # create_image_from_template(template_type="Infographic met meerdere USP's", input_image='bol_automation_modules/images/resources/pre_photos/current_bol_images/image0.jpg', output_path='post_photos', annotation='Vervangbare mesjes')
     # add_trash_can_to_image(os.path.join('temp/trashcan_image_bol.jpg'))
-    create_image_from_template(template_type="infographic meerdere usp", input_image='pre_photos/current_bol_images/image0.jpg', output_path='post_photos', annotation=['Vervangbare mesjes', 'Lief voor de kinders', 'Makkelijk te reinigen', 'Lekker slapen'], icon_keyword=['trashcan', 'heart', 'cleaning', 'eyelid'])
+    create_image_from_template(template_type="infographic meerdere usp", input_image='bol_automation_modules/images/resources/pre_photos/current_bol_images/image0.jpg', output_path='post_photos', annotation=['Vervangbare mesjes', 'Lief voor de kinders', 'Makkelijk te reinigen', 'Lekker slapen'], icon_keyword=['trashcan', 'heart', 'cleaning', 'eyelid'])

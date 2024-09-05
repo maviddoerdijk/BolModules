@@ -12,7 +12,7 @@ class ResourceLib:
     
     def __init__(self):
         load_dotenv()
-        self.path = "resources"
+        self.path = "bol_automation_modules/images/resources"
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         self.auth = OAuth1(os.getenv('NOUN_KEY'), os.getenv('NOUN_SECRET'))

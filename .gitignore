@@ -1,2 +1,15 @@
 /venv/
 .env
+
+# all bloat files
+*.png
+*.ttf
+*.pyc
+*.jpg
+*.csv
+
+
+# folders
+*/__pycache__/
+__pycache__/
+bol_automation_modules/images/resources/fonts/
